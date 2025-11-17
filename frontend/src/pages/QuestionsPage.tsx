@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Login from "./Login";
 
 interface Question {
   id?: number;
@@ -9,8 +10,17 @@ interface Question {
 }
 
 export default function QuestionsPage() {
+  // 🔐 LOGIN SIMPLE
+  const [authenticated, setAuthenticated] = useState(false);
+
+  // ------- HOOKS DE LA PÁGINA (deben ir SIEMPRE antes del return) -------
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [newQ, setNewQ] = useState<Question>({ question_text: "", answer_text: "", youtube_link: "" });
+  const [newQ, setNewQ] = useState<Question>({
+    question_text: "",
+    answer_text: "",
+    youtube_link: "",
+  });
+
   const API = import.meta.env.VITE_API_BASE;
 
   const loadQuestions = () => {
@@ -18,8 +28,9 @@ export default function QuestionsPage() {
   };
 
   useEffect(() => {
+    if (!authenticated) return; // 👈 evita llamadas mientras no hay login
     loadQuestions();
-  }, []);
+  }, [authenticated]);
 
   const addQuestion = async () => {
     await axios.post(`${API}/api/questions`, newQ);
@@ -37,6 +48,12 @@ export default function QuestionsPage() {
     loadQuestions();
   };
 
+  // ------- LOGIN VIEW -------
+  if (!authenticated) {
+    return <Login onSuccess={() => setAuthenticated(true)} />;
+  }
+
+  // ------- MAIN VIEW -------
   return (
     <div>
       <h2>Administrar Preguntas</h2>
@@ -49,24 +66,28 @@ export default function QuestionsPage() {
           value={newQ.question_text}
           onChange={(e) => setNewQ({ ...newQ, question_text: e.target.value })}
         />
+
         <textarea
           className="input"
           placeholder="Respuesta"
           value={newQ.answer_text}
           onChange={(e) => setNewQ({ ...newQ, answer_text: e.target.value })}
         />
+
         <input
           className="input"
           placeholder="Link de YouTube (opcional)"
           value={newQ.youtube_link}
           onChange={(e) => setNewQ({ ...newQ, youtube_link: e.target.value })}
         />
+
         <button className="button-primary" onClick={addQuestion}>
           ➕ Agregar
         </button>
       </div>
 
       <h3>Lista de Preguntas</h3>
+
       {questions.map((q) => (
         <div key={q.id} className="card">
           <input
@@ -74,21 +95,28 @@ export default function QuestionsPage() {
             value={q.question_text}
             onChange={(e) => (q.question_text = e.target.value)}
           />
+
           <textarea
             className="input"
             value={q.answer_text}
             onChange={(e) => (q.answer_text = e.target.value)}
           />
+
           <input
             className="input"
             value={q.youtube_link || ""}
             onChange={(e) => (q.youtube_link = e.target.value)}
           />
+
           <div style={{ display: "flex", gap: "10px" }}>
             <button className="button-primary" onClick={() => updateQuestion(q)}>
               💾 Guardar
             </button>
-            <button className="button-danger" onClick={() => deleteQuestion(q.id!)}>
+
+            <button
+              className="button-danger"
+              onClick={() => deleteQuestion(q.id!)}
+            >
               🗑️ Eliminar
             </button>
           </div>

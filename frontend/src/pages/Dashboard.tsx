@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Login from "./Login";
+
 import {
   ResponsiveContainer,
   BarChart,
@@ -30,6 +32,10 @@ interface StatsOverview {
 }
 
 export default function Dashboard() {
+  // 🔐 LOGIN SIMPLE
+  const [authenticated, setAuthenticated] = useState(false);
+
+  // ----------- TUS HOOKS (deben ir antes del return) -----------
   const [stats, setStats] = useState<StatsOverview>({
     total_questions: 0,
     total_interactions: 0,
@@ -37,12 +43,15 @@ export default function Dashboard() {
     top_questions: [],
     worst_questions: [],
   });
+
   const [interactions, setInteractions] = useState<Interaction[]>([]);
   const [loading, setLoading] = useState(true);
 
   const API = import.meta.env.VITE_API_BASE;
 
   useEffect(() => {
+    if (!authenticated) return; // 👈 evita llamadas mientras no esté logueado
+
     async function loadData() {
       try {
         const [statsRes, interRes] = await Promise.all([
@@ -59,18 +68,22 @@ export default function Dashboard() {
       }
     }
 
-    // Primera carga
     loadData();
-
-    //  Refresca los datos cada 5 segundos
     const interval = setInterval(loadData, 5000);
-
-    // Limpieza del intervalo al desmontar el componente
     return () => clearInterval(interval);
-  }, [API]);
+  }, [API, authenticated]); // 👈 se activa recién al loguear
+
+  // ----------- LOGIN VIEW -----------
+
+  if (!authenticated) {
+    return <Login onSuccess={() => setAuthenticated(true)} />;
+  }
+
+  // ----------- DASHBOARD VIEW -----------
 
   const dbMatches = interactions.filter((i) => i.responded_with_db).length;
   const llmAnswers = interactions.length - dbMatches;
+
   const chartData = [
     { name: "Coincidencias BD", value: dbMatches },
     { name: "Respuestas LLM", value: llmAnswers },
@@ -100,7 +113,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Gráfico de distribución */}
+          {/* Gráfico */}
           <div className="card" style={{ marginTop: "30px" }}>
             <h3>Distribución de Respuestas</h3>
             <ResponsiveContainer width="100%" height={300}>
@@ -115,7 +128,7 @@ export default function Dashboard() {
             </ResponsiveContainer>
           </div>
 
-          {/* Tabla de interacciones */}
+          {/* Tabla */}
           <div className="card" style={{ marginTop: "30px" }}>
             <h3>Últimas Interacciones</h3>
             {interactions.length > 0 ? (
@@ -131,22 +144,20 @@ export default function Dashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {interactions
-                    .slice(0, 20)
-                    .map((i) => (
-                      <tr key={i.id}>
-                        <td>{i.username || "Anónimo"}</td>
-                        <td>{i.user_message.slice(0, 40)}...</td>
-                        <td>{i.matched_question_id ?? "—"}</td>
-                        <td>
-                          {i.similarity
-                            ? `${(i.similarity * 100).toFixed(1)}%`
-                            : "—"}
-                        </td>
-                        <td>{i.responded_with_db ? "Sí" : "No"}</td>
-                        <td>{new Date(i.created_at).toLocaleString()}</td>
-                      </tr>
-                    ))}
+                  {interactions.slice(0, 20).map((i) => (
+                    <tr key={i.id}>
+                      <td>{i.username || "Anónimo"}</td>
+                      <td>{i.user_message.slice(0, 40)}...</td>
+                      <td>{i.matched_question_id ?? "—"}</td>
+                      <td>
+                        {i.similarity
+                          ? `${(i.similarity * 100).toFixed(1)}%`
+                          : "—"}
+                      </td>
+                      <td>{i.responded_with_db ? "Sí" : "No"}</td>
+                      <td>{new Date(i.created_at).toLocaleString()}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             ) : (
