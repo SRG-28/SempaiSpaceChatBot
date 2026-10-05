@@ -22,6 +22,7 @@ export default function ChatPage() {
 
   return (
     <div>
+      <br />
       <h2>Sempai Space Chatbot</h2>
       <div className="card">
         <textarea
