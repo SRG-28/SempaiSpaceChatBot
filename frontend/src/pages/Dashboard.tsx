@@ -32,10 +32,10 @@ interface StatsOverview {
 }
 
 export default function Dashboard() {
-  // 🔐 LOGIN SIMPLE
+  
   const [authenticated, setAuthenticated] = useState(false);
 
-  // ----------- TUS HOOKS (deben ir antes del return) -----------
+
   const [stats, setStats] = useState<StatsOverview>({
     total_questions: 0,
     total_interactions: 0,
@@ -50,7 +50,7 @@ export default function Dashboard() {
   const API = import.meta.env.VITE_API_BASE;
 
   useEffect(() => {
-    if (!authenticated) return; // 👈 evita llamadas mientras no esté logueado
+    if (!authenticated) return; 
 
     async function loadData() {
       try {
@@ -71,7 +71,7 @@ export default function Dashboard() {
     loadData();
     const interval = setInterval(loadData, 5000);
     return () => clearInterval(interval);
-  }, [API, authenticated]); // 👈 se activa recién al loguear
+  }, [API, authenticated]); 
 
   // ----------- LOGIN VIEW -----------
 
@@ -97,7 +97,7 @@ export default function Dashboard() {
         <p>Cargando datos...</p>
       ) : (
         <>
-          {/* Tarjetas resumen */}
+          
           <div className="cards-container">
             <div className="card card-purple">
               <h3>Total Preguntas en BD</h3>
@@ -113,7 +113,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Gráfico */}
+       
           <div className="card" style={{ marginTop: "30px" }}>
             <h3>Distribución de Respuestas</h3>
             <ResponsiveContainer width="100%" height={300}>
@@ -128,7 +128,7 @@ export default function Dashboard() {
             </ResponsiveContainer>
           </div>
 
-          {/* Tabla */}
+         
           <div className="card" style={{ marginTop: "30px" }}>
             <h3>Últimas Interacciones</h3>
             {interactions.length > 0 ? (

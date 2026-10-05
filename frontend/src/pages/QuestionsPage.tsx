@@ -10,10 +10,10 @@ interface Question {
 }
 
 export default function QuestionsPage() {
-  // 🔐 LOGIN SIMPLE
+  
   const [authenticated, setAuthenticated] = useState(false);
 
-  // ------- HOOKS DE LA PÁGINA (deben ir SIEMPRE antes del return) -------
+  
   const [questions, setQuestions] = useState<Question[]>([]);
   const [newQ, setNewQ] = useState<Question>({
     question_text: "",
@@ -82,7 +82,7 @@ export default function QuestionsPage() {
         />
 
         <button className="button-primary" onClick={addQuestion}>
-          ➕ Agregar
+           Agregar
         </button>
       </div>
 
@@ -110,14 +110,14 @@ export default function QuestionsPage() {
 
           <div style={{ display: "flex", gap: "10px" }}>
             <button className="button-primary" onClick={() => updateQuestion(q)}>
-              💾 Guardar
+               Guardar
             </button>
 
             <button
               className="button-danger"
               onClick={() => deleteQuestion(q.id!)}
             >
-              🗑️ Eliminar
+               Eliminar
             </button>
           </div>
         </div>
