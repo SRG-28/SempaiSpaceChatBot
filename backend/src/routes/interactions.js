@@ -5,7 +5,7 @@ import { generateGuided, generateFree } from "../openai.js";
 const router = express.Router();
 const SIM_THRESHOLD = parseFloat(process.env.SIMILARITY_THRESHOLD || "0.45");
 
-// ✅ Obtener todas las interacciones (para Dashboard)
+
 router.get("/", async (req, res) => {
   try {
     const r = await pool.query(
@@ -29,7 +29,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ✅ Registrar nueva interacción
+
 router.post("/", async (req, res) => {
   try {
     const { provider, provider_user_id, username, message } = req.body;
@@ -54,7 +54,7 @@ router.post("/", async (req, res) => {
       ]);
     }
 
-    // Buscar coincidencias con pg_trgm
+    
     const q = `
       SELECT id, question_text, answer_text, similarity(question_text, $1) AS similarity
       FROM questions

@@ -3,7 +3,7 @@ import { pool } from "../db.js";
 
 const router = express.Router();
 
-// list
+
 router.get("/", async (req, res) => {
   try {
     const r = await pool.query('SELECT * FROM questions ORDER BY updated_at DESC');
@@ -14,14 +14,14 @@ router.get("/", async (req, res) => {
   }
 });
 
-// get by id
+
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
   const r = await pool.query('SELECT * FROM questions WHERE id=$1', [id]);
   res.json(r.rows[0]);
 });
 
-// create
+
 router.post("/", async (req, res) => {
   const { question_text, answer_text, youtube_link, tags } = req.body;
   const r = await pool.query(
@@ -31,7 +31,7 @@ router.post("/", async (req, res) => {
   res.json(r.rows[0]);
 });
 
-// update
+
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
   const { question_text, answer_text, youtube_link, tags } = req.body;
@@ -42,7 +42,7 @@ router.put("/:id", async (req, res) => {
   res.json(r.rows[0]);
 });
 
-// delete
+
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
   await pool.query('DELETE FROM questions WHERE id=$1', [id]);

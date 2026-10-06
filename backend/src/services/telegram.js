@@ -18,7 +18,7 @@ export function startTelegram() {
       const provider_user_id = String(msg.from.id);
       const username = msg.from.username || `${msg.from.first_name || ''} ${msg.from.last_name || ''}`.trim();
 
-      // upsert
+      
       const u = await pool.query('SELECT id FROM users WHERE provider=$1 AND provider_user_id=$2', [provider, provider_user_id]);
       let userId;
       if (u.rows.length === 0) {
@@ -29,7 +29,7 @@ export function startTelegram() {
         await pool.query('UPDATE users SET username=$1 WHERE id=$2', [username, userId]);
       }
 
-      // search similar
+      
       const s = `SELECT id, question_text, answer_text, similarity(question_text, $1) as similarity FROM questions WHERE question_text % $1 ORDER BY similarity DESC LIMIT 3;`;
       const r = await pool.query(s, [text]);
       const hits = r.rows;
