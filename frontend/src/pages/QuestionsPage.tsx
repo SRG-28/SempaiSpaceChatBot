@@ -28,7 +28,7 @@ export default function QuestionsPage() {
   };
 
   useEffect(() => {
-    if (!authenticated) return; // 👈 evita llamadas mientras no hay login
+    if (!authenticated) return; 
     loadQuestions();
   }, [authenticated]);
 
