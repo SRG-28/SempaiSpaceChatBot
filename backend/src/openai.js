@@ -1,4 +1,3 @@
-
 import OpenAI from "openai";
 import dotenv from "dotenv";
 
@@ -13,8 +12,7 @@ export async function generateGuided({ userMessage, docs = [] }) {
     process.env.SIMILARITY_THRESHOLD || "0.45"
   );
 
-  // Si hay una coincidencia suficientemente alta,
-  // devolver directamente la respuesta de la base de datos.
+
   if (
     docs.length > 0 &&
     Number(docs[0].similarity) >= threshold &&
@@ -23,7 +21,7 @@ export async function generateGuided({ userMessage, docs = [] }) {
     return docs[0].answer_text;
   }
 
-  // Si OpenAI no está disponible y no hay una coincidencia fiable.
+  
   if (!client) {
     return "No tengo información específica sobre eso.";
   }
