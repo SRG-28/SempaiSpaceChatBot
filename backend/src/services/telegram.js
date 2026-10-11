@@ -24,7 +24,7 @@ export function startTelegram() {
         msg.from.username ||
         `${msg.from.first_name || ""} ${msg.from.last_name || ""}`.trim();
 
-      // Buscar o registrar al usuario
+      
       const u = await pool.query(
         "SELECT id FROM users WHERE provider=$1 AND provider_user_id=$2",
         [provider, provider_user_id]
