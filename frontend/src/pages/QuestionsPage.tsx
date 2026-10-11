@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Login from "./Login";
@@ -39,20 +38,6 @@ export default function QuestionsPage() {
     }
   }, [authenticated]);
 
-  const updateField = (
-    id: number,
-    field: keyof Question,
-    value: string
-  ) => {
-    setQuestions((current) =>
-      current.map((question) =>
-        question.id === id
-          ? { ...question, [field]: value }
-          : question
-      )
-    );
-  };
-
   const addQuestion = async () => {
     if (!newQ.question_text.trim() || !newQ.answer_text.trim()) {
       alert("Ingresa la pregunta y la respuesta.");
@@ -80,15 +65,12 @@ export default function QuestionsPage() {
     setSavingId(question.id);
 
     try {
-      await axios.put(
-        `${API}/api/questions/${question.id}`,
-        {
-          question_text: question.question_text,
-          answer_text: question.answer_text,
-          youtube_link: question.youtube_link || null,
-          tags: question.tags ?? null,
-        }
-      );
+      await axios.put(`${API}/api/questions/${question.id}`, {
+        question_text: question.question_text,
+        answer_text: question.answer_text,
+        youtube_link: question.youtube_link || null,
+        tags: question.tags ?? null,
+      });
 
       await loadQuestions();
       alert("Pregunta actualizada correctamente.");
@@ -131,7 +113,7 @@ export default function QuestionsPage() {
           onChange={(event) =>
             setNewQ((current) => ({
               ...current,
-              question_text: event.target.value,
+              question_text: event.currentTarget.value,
             }))
           }
         />
@@ -143,7 +125,7 @@ export default function QuestionsPage() {
           onChange={(event) =>
             setNewQ((current) => ({
               ...current,
-              answer_text: event.target.value,
+              answer_text: event.currentTarget.value,
             }))
           }
         />
@@ -155,7 +137,7 @@ export default function QuestionsPage() {
           onChange={(event) =>
             setNewQ((current) => ({
               ...current,
-              youtube_link: event.target.value,
+              youtube_link: event.currentTarget.value,
             }))
           }
         />
@@ -171,54 +153,71 @@ export default function QuestionsPage() {
         <div key={question.id} className="card">
           <input
             className="input"
-            value={question.question_text}
+            type="text"
+            value={question.question_text ?? ""}
             style={{
               color: "#ffffff",
               WebkitTextFillColor: "#ffffff",
               caretColor: "#38bdf8",
+              opacity: 1,
+              backgroundColor: "#1e1e2f",
             }}
-            onChange={(event) =>
-              updateField(
-                question.id!,
-                "question_text",
-                event.target.value
-              )
-            }
+            onChange={(event) => {
+              const value = event.currentTarget.value;
+              setQuestions((previous) =>
+                previous.map((item) =>
+                  item.id === question.id
+                    ? { ...item, question_text: value }
+                    : item
+                )
+              );
+            }}
           />
 
           <textarea
             className="input"
-            value={question.answer_text}
+            value={question.answer_text ?? ""}
             style={{
               color: "#ffffff",
               WebkitTextFillColor: "#ffffff",
               caretColor: "#38bdf8",
+              opacity: 1,
+              backgroundColor: "#1e1e2f",
             }}
-            onChange={(event) =>
-              updateField(
-                question.id!,
-                "answer_text",
-                event.target.value
-              )
-            }
+            onChange={(event) => {
+              const value = event.currentTarget.value;
+              setQuestions((previous) =>
+                previous.map((item) =>
+                  item.id === question.id
+                    ? { ...item, answer_text: value }
+                    : item
+                )
+              );
+            }}
           />
 
           <input
             className="input"
+            type="text"
             placeholder="Link de YouTube (opcional)"
             value={question.youtube_link ?? ""}
             style={{
               color: "#ffffff",
               WebkitTextFillColor: "#ffffff",
               caretColor: "#38bdf8",
+              opacity: 1,
+              backgroundColor: "#1e1e2f",
             }}
-            onChange={(event) =>
-              updateField(
-                question.id!,
-                "youtube_link",
-                event.target.value
-              )
-            }
+            onChange={(event) => {
+              const value = event.currentTarget.value;
+              setQuestions((previous) =>
+                previous.map((item) =>
+                  item.id === question.id
+                    ? { ...item, youtube_link: value }
+                    : item
+                )
+              );
+            }}
           />
 
           <div style={{ display: "flex", gap: "10px" }}>

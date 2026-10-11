@@ -240,3 +240,15 @@ textarea.input {
   opacity: 1 !important;
   background-color: #1e1e2f !important;
 }
+
+.card input.input,
+.card textarea.input {
+  color: white !important;
+  -webkit-text-fill-color: white !important;
+  caret-color: #38bdf8 !important;
+  opacity: 1 !important;
+  background: #1e1e2f !important;
+  font-family: Arial, sans-serif !important;
+  font-size: 16px !important;
+  text-shadow: none !important;
+}
