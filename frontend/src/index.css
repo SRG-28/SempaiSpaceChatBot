@@ -8,7 +8,6 @@
   --accent: #a78bfa;
 }
 
-
 body {
   background: var(--black);
   color: var(--white);
@@ -20,12 +19,10 @@ body {
   overflow: hidden;
 }
 
-
 .app-layout {
   display: flex;
   height: 100vh;
 }
-
 
 .sidebar {
   width: 260px;
@@ -36,7 +33,6 @@ body {
   align-items: center;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
 }
-
 
 .sidebar-image-container {
   background: var(--white);
@@ -65,7 +61,6 @@ body {
   font-size: 1.25rem;
 }
 
-
 .sidebar nav {
   display: flex;
   flex-direction: column;
@@ -92,9 +87,8 @@ body {
   font-weight: 600;
 }
 
-
 .sidebar .telegram-link {
-  margin-top: auto;  
+  margin-top: auto;
   background: #4343d7;
   color: white;
   padding: 10px 14px;
@@ -109,7 +103,6 @@ body {
   background: #5cc6ff;
 }
 
-
 .main {
   flex: 1;
   padding: 30px;
@@ -117,7 +110,6 @@ body {
   background: var(--gray);
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4);
 }
-
 
 .card {
   background: #232334;
@@ -132,7 +124,6 @@ body {
   transform: translateY(-3px);
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
 }
-
 
 .cards-container {
   display: flex;
@@ -153,11 +144,12 @@ body {
   background: linear-gradient(135deg, #1f2937, #111827);
 }
 
-
 .input {
   background: #1e1e2f;
   border: 1px solid #444;
-  color: var(--white);
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+  caret-color: #38bdf8;
   padding: 10px;
   border-radius: 6px;
   width: 100%;
@@ -166,10 +158,14 @@ body {
 }
 
 .input:focus {
-  border-color: var(--celeste);
-  outline: none;
+  border-color: #38bdf8;
+  outline: 2px solid rgba(56, 189, 248, 0.25);
 }
 
+.input::placeholder {
+  color: #a1a1aa;
+  opacity: 1;
+}
 
 .button-primary {
   background: var(--celeste);
@@ -201,7 +197,6 @@ body {
   background: #ff6b6b;
 }
 
-
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -224,7 +219,6 @@ body {
 .data-table tr:hover {
   background-color: rgba(255, 255, 255, 0.05);
 }
-
 
 ::-webkit-scrollbar {
   width: 10px;
