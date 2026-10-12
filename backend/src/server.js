@@ -17,21 +17,65 @@ app.use("/api/questions", questionsRoutes);
 app.use("/api/interactions", interactionsRoutes);
 app.use("/api/feedback", feedbackRoutes);
 
-// overview stats endpoint
 app.get("/api/stats/overview", async (req, res) => {
   try {
-    const totalQ = (await pool.query('SELECT count(*) FROM questions')).rows[0].count;
-    const totalInteractions = (await pool.query('SELECT count(*) FROM interactions')).rows[0].count;
-    const feedbackTotal = (await pool.query('SELECT count(*) FROM feedback')).rows[0].count;
-    const topQ = (await pool.query(`SELECT q.id, q.question_text, count(i.*) as uses FROM questions q LEFT JOIN interactions i ON q.id = i.matched_question_id GROUP BY q.id ORDER BY uses DESC LIMIT 10`)).rows;
-    const worstQ = (await pool.query(`SELECT q.id, q.question_text, AVG(f.rating) as avg_rating, count(f.*) as feedback_count FROM questions q LEFT JOIN interactions i ON q.id = i.matched_question_id LEFT JOIN feedback f ON f.interaction_id = i.id GROUP BY q.id HAVING count(f.*) > 0 ORDER BY avg_rating ASC LIMIT 10`)).rows;
-    res.json({ total_questions: Number(totalQ), total_interactions: Number(totalInteractions), feedback_total: Number(feedbackTotal), top_questions: topQ, worst_questions: worstQ });
+    const totalQ = (
+      await pool.query("SELECT COUNT(*) FROM questions")
+    ).rows[0].count;
+
+    const totalInteractions = (
+      await pool.query("SELECT COUNT(*) FROM interactions")
+    ).rows[0].count;
+
+    const feedbackTotal = (
+      await pool.query("SELECT COUNT(*) FROM feedback")
+    ).rows[0].count;
+
+    const helpfulFeedback = (
+      await pool.query("SELECT COUNT(*) FROM feedback WHERE rating = 5")
+    ).rows[0].count;
+
+    const topQ = (
+      await pool.query(`
+        SELECT q.id, q.question_text, COUNT(i.*) AS uses
+        FROM questions q
+        LEFT JOIN interactions i ON q.id = i.matched_question_id
+        GROUP BY q.id
+        ORDER BY uses DESC
+        LIMIT 10
+      `)
+    ).rows;
+
+    const worstQ = (
+      await pool.query(`
+        SELECT q.id, q.question_text, AVG(f.rating) AS avg_rating,
+               COUNT(f.*) AS feedback_count
+        FROM questions q
+        LEFT JOIN interactions i ON q.id = i.matched_question_id
+        LEFT JOIN feedback f ON f.interaction_id = i.id
+        GROUP BY q.id
+        HAVING COUNT(f.*) > 0
+        ORDER BY avg_rating ASC
+        LIMIT 10
+      `)
+    ).rows;
+
+    res.json({
+      total_questions: Number(totalQ),
+      total_interactions: Number(totalInteractions),
+      feedback_total: Number(feedbackTotal),
+      helpful_feedback: Number(helpfulFeedback),
+      top_questions: topQ,
+      worst_questions: worstQ
+    });
   } catch (err) {
-    console.error(err); res.status(500).json({ error: 'server' });
+    console.error(err);
+    res.status(500).json({ error: "server" });
   }
 });
 
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
   console.log(`Backend listening on http://localhost:${PORT}`);
   startTelegram();

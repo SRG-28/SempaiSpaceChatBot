@@ -27,19 +27,19 @@ interface StatsOverview {
   total_questions: number;
   total_interactions: number;
   feedback_total: number;
+  helpful_feedback: number;
   top_questions: any[];
   worst_questions: any[];
 }
 
 export default function Dashboard() {
-  
   const [authenticated, setAuthenticated] = useState(false);
-
 
   const [stats, setStats] = useState<StatsOverview>({
     total_questions: 0,
     total_interactions: 0,
     feedback_total: 0,
+    helpful_feedback: 0,
     top_questions: [],
     worst_questions: [],
   });
@@ -50,7 +50,7 @@ export default function Dashboard() {
   const API = import.meta.env.VITE_API_BASE;
 
   useEffect(() => {
-    if (!authenticated) return; 
+    if (!authenticated) return;
 
     async function loadData() {
       try {
@@ -70,16 +70,13 @@ export default function Dashboard() {
 
     loadData();
     const interval = setInterval(loadData, 5000);
-    return () => clearInterval(interval);
-  }, [API, authenticated]); 
 
-  // ----------- LOGIN VIEW -----------
+    return () => clearInterval(interval);
+  }, [API, authenticated]);
 
   if (!authenticated) {
     return <Login onSuccess={() => setAuthenticated(true)} />;
   }
-
-  // ----------- DASHBOARD VIEW -----------
 
   const dbMatches = interactions.filter((i) => i.responded_with_db).length;
   const llmAnswers = interactions.length - dbMatches;
@@ -97,23 +94,28 @@ export default function Dashboard() {
         <p>Cargando datos...</p>
       ) : (
         <>
-          
           <div className="cards-container">
             <div className="card card-purple">
               <h3>Total Preguntas en BD</h3>
               <p>{stats.total_questions}</p>
             </div>
+
             <div className="card card-celeste">
               <h3>Total Interacciones</h3>
               <p>{stats.total_interactions}</p>
             </div>
+
             <div className="card card-black">
               <h3>Feedback Recibido</h3>
               <p>{stats.feedback_total}</p>
             </div>
+
+            <div className="card card-purple">
+              <h3>Respuestas Útiles</h3>
+              <p>{stats.helpful_feedback}</p>
+            </div>
           </div>
 
-       
           <div className="card" style={{ marginTop: "30px" }}>
             <h3>Distribución de Respuestas</h3>
             <ResponsiveContainer width="100%" height={300}>
@@ -128,9 +130,9 @@ export default function Dashboard() {
             </ResponsiveContainer>
           </div>
 
-         
           <div className="card" style={{ marginTop: "30px" }}>
             <h3>Últimas Interacciones</h3>
+
             {interactions.length > 0 ? (
               <table className="data-table">
                 <thead>
@@ -143,6 +145,7 @@ export default function Dashboard() {
                     <th>Fecha</th>
                   </tr>
                 </thead>
+
                 <tbody>
                   {interactions.slice(0, 20).map((i) => (
                     <tr key={i.id}>
